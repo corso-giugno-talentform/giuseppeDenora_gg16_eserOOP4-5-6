@@ -1,98 +1,80 @@
 <?php
-
-class Azienda{
-    public $nome;
-    public $sede;
-    private $totaleDipendenti=0;
-    public static $stipendio_medio_mensile = 1500;
-     public static $totale = 0; 
+//updated
+class Company {
+    public $name;
+    public $location;
+    private $employees = 0;
     
-    private static $istanze = [];
+    public static $monthlySalary = 1500;
+    public static $totalSpent = 0;
 
-    function  __construct(string $nome, string $sede , int $totaleDipendenti){
-        $this->nome=$nome;
-        $this->sede=$sede;
-        $this->totaleDipendenti=$totaleDipendenti;
-        self::$istanze[] = $this; //ogni volta che istanzo un azienda ne aggiungo uno all'array cosi posso tenerne conto nel conteggio totale 
+    private static $instances = [];
+
+    public function __construct(string $name, string $location, int $employees = 0) {
+        $this->name = $name;
+        $this->location = $location;
+        $this->employees = $employees;
+        self::$instances[] = $this;
     }
 
-public function getInfo(){
-    echo "l'ufficio $this->nome  con sede  in $this->sede ha ben $this->totaleDipendenti dipendenti"."\n";
-
-
-}
-//metodo  per il totale aggiungendo i parziali di ogni anno
-public  function spesaTotaleAdAnnoAttuale(){
-   $costo_totale_azienda= self::$stipendio_medio_mensile*$this->totaleDipendenti*12;
-   $totaleSingolaAzienda= self::$totale += $costo_totale_azienda;
-   echo "Il costo totale parziale all'anno corrente dell'azienda $this->nome è di $totaleSingolaAzienda  Euro" ."\n";;
-   
-
-}
-
-
-public function getSpesaAnnuale() {
-    return self::$stipendio_medio_mensile * $this->totaleDipendenti * 12;
-}
-
-
-
-//spesa totale di tutte le aziende  tendo conto anche di varie istanze 
-public static function spesaTutteAziende(){
-     
-foreach(self::$istanze as $azienda){
-   
-    self::$totale+=$azienda->getSpesaAnnuale();
-
-}return self::$totale;
-
-
-}
-///facendo questo non avevo un valore corretto
- /*   public static function calcoloTotale()
-    {
-        return self::$totale;
+    public function getInfo() {
+        if ($this->employees > 0) {
+           echo "L'ufficio " . $this->name . " con sede in " . $this->location . " ha ben " . $this->employees . " dipendenti. \n";
+        } else {
+            echo "L'ufficio " . $this->name . " con sede in " . $this->location . " non ha dipendenti. \n";
+        }
     }
-} */
 
+    public function getAnnualCost() {
+        return $this->employees * self::$monthlySalary * 12;
+    }
 
- 
+    // Esercizio 5: somma al totale ogni volta che viene chiamato
+    public function addToGlobalTotal() {
+        $partial = $this->getAnnualCost();
+        self::$totalSpent += $partial;
+        echo "Costo annuale dell'azenda  {$this->name}: {$partial} € | fin ora : " . self::$totalSpent . " €\n";
+    }
 
+    // Esercizio 6: metodo statico che calcola una sola volta il totale di tutte le aziende
+    public static function calculateGlobalTotal() {
+        $total = 0;
+        foreach (self::$instances as $instance) {
+            $total += $instance->getAnnualCost();
+        }
+        return $total;
+    }
 }
 
+$company1 = new Company('Apple', 'USA', 3);
+$company2 = new Company('Barilla', 'ITA', 3);
+$company3 = new Company('Nintendo', 'JAP', 5);
+$company4 = new Company('Nokia', 'FIN', 10);
+$company5 = new Company('Xiaomi', 'CHI', 3);
 
+$companies = [$company1, $company2, $company3, $company4, $company5];
 
-$company1= new Azienda('vodafone','ITA',300);
-$company2= new Azienda('timIta','ITA',1000);
-$company3= new Azienda('Google','USA',20213);
-$company4= new Azienda('tuttiIfrutti','ITA',2);
-$company5= new Azienda('Bolshoi','RU',123);
-
-$companies=[$company1,$company2,$company3,$company4,$company5];
+// Esercizio 2: 
 var_dump($companies);
 
-echo "*************** INFO ***************\n";
-foreach ($companies as $azienda) {
-    $azienda->getInfo();
+// Esercizio 3
+echo "\n******** INFO ********\n";
+foreach ($companies as $company) {
+    $company->getInfo();
 }
 
-$company1->getInfo();
+// Esercizio 4
+echo "\n******** Esercizio 4 ********\n";
+foreach ($companies as $company) {
+    echo "Spesa annuale di {$company->name}: " . $company->getAnnualCost() . " €\n";
+}
 
-echo"***************esercizio 4***** \n";
+// Esercizio 5
+echo "\n******** Esercizio 5 ********\n";
+$company1->addToGlobalTotal();
+$company2->addToGlobalTotal();
+$company3->addToGlobalTotal();
 
-
-echo "La spesa annuale dell'azienda " . $company1->nome . " è di " . $company1->getSpesaAnnuale() . " euro \n";
-
-
-echo"***************esercizio 5***** \n";
-
-$company3->spesaTotaleAdAnnoAttuale();
-$company3->spesaTotaleAdAnnoAttuale();
-$company3->spesaTotaleAdAnnoAttuale();
-
-
-echo"***************esercizio 6***** \n";
-
-echo "Spesa totale di tutte le aziende: " . Azienda::spesaTutteAziende() . " €";
-echo"***************esercizio      6 bis***** \n";
-
+// Esercizio 6
+echo "\n******** Esercizio 6 ********\n";
+echo "Totale spesa di tutte le sedi: " . Company::calculateGlobalTotal() . " €\n";
