@@ -29,7 +29,7 @@ class Company {
         return $this->employees * self::$monthlySalary * 12;
     }
 
-    // Esercizio 5: somma al totale ogni volta che viene chiamato
+    // Esercizio 5: 
     public function addToGlobalTotal() {
         $partial = $this->getAnnualCost();
         self::$totalSpent += $partial;
